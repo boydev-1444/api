@@ -1,4 +1,3 @@
-// Handle POST data received from a client
 async function httpPostReceiver(request) {
     try {
         const data = await request.text();
@@ -12,7 +11,8 @@ async function httpPostReceiver(request) {
         const responseData = {
             status: 'success',
             received: parsedData,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            message: "Processed by custom route handler"
         };
         return new Response(JSON.stringify(responseData), {
             headers: { 'Content-Type': 'application/json' },
@@ -28,7 +28,8 @@ async function httpPostReceiver(request) {
 }
 
 self.addEventListener('fetch', event => {
-    if (event.request.method === 'POST') {
+    const url = new URL(event.request.url);
+    if (event.request.method === 'POST' && url.pathname === '/moon') {
         event.respondWith(httpPostReceiver(event.request));
     }
-});
+})
